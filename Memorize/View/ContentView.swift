@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct ContentView: View {
-    let carnivoreEmojis = ["🦊", "🦁", "🐻", "🐉", "🐅", "🐊", "🦅", "🦊", "🦁", "🐻", "🐉", "🐅", "🐊", "🦅"]
-    let herbivoreEmojis = ["🐨", "🐒", "🪿", "🐢", "🦍", "🐄", "🦒", "🐨", "🐒", "🪿", "🐢", "🦍", "🐄", "🦒"]
-    let seaEmojis = ["🦈", "🐋", "🦭", "🐙", "🦑", "🪼", "🦀", "🦈", "🐋", "🦭", "🐙", "🦑", "🪼", "🦀"]
+    let carnivoreEmojis = ["🦊", "🦁", "🐻", "🐉", "🐅", "🐊", "🦅", "🐺", "🦈", "🦖", "🐦‍⬛", "🦇", "🦊", "🦁", "🐻", "🐉", "🐅", "🐊", "🦅", "🐺", "🦈", "🦖", "🐦‍⬛", "🦇"]
+    let herbivoreEmojis = ["🐨", "🐒", "🪿", "🐢", "🦍", "🐄", "🦒", "🦆", "🦋", "🦕", "🦘", "🦏", "🐨", "🐒", "🪿", "🐢", "🦍", "🐄", "🦒", "🦆", "🦋", "🦕", "🦘", "🦏"]
+    let seaEmojis = ["🦈", "🐋", "🦭", "🐙", "🦑", "🪼", "🦀", "🦩", "🐬", "🦞", "🐟", "🐡", "🦈", "🐋", "🦭", "🐙", "🦑", "🪼", "🦀", "🦩", "🐬", "🦞", "🐟", "🐡"]
     @State var currentEmojiArray: [String] = []
     @State var firstThemeClicked = false
     @State var secondThemeClicked = false
     @State var thirdThemeClicked = false
-    @State var cardCount = 10
+    @State var cardCount = 24
     
     var body: some View {
         VStack {
@@ -26,15 +26,15 @@ struct ContentView: View {
             }
             Spacer()
             cardAdjusters
-        }
-        .padding()
+        } .padding()
+            .padding(.vertical, -6)
     }
     
     var cards: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 120))]) {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 70))]) {
             if currentEmojiArray != [] {
                 ForEach(0..<cardCount, id: \.self) { index in
-                    CardView(content: currentEmojiArray[index])
+                    CardView(content: currentEmojiArray.shuffled()[index])
                         .aspectRatio(2/3, contentMode: .fit)
                 }
                 .foregroundColor(firstThemeClicked ? .red : secondThemeClicked ? .green : thirdThemeClicked ? .blue : .black)
@@ -46,7 +46,7 @@ struct ContentView: View {
         HStack {
             cardRemover
             Spacer()
-            themeChoosing .padding(.leading, -6)
+            themeChoosing .padding(.leading, -9)
             Spacer()
             cardAdder
         } .imageScale(.large)
@@ -89,7 +89,7 @@ struct ContentView: View {
             Text("Carnivore")
                 .font(.footnote)
         } .onTapGesture {
-            themeChoosing(themeChosen: carnivoreEmojis)
+            themeChoosing(themeChosen: carnivoreEmojis.shuffled())
             firstThemeClicked = true
             secondThemeClicked = false
             thirdThemeClicked = false
@@ -106,7 +106,7 @@ struct ContentView: View {
             Text("Herbivore")
                 .font(.footnote)
         }.onTapGesture {
-            themeChoosing(themeChosen: herbivoreEmojis)
+            themeChoosing(themeChosen: herbivoreEmojis.shuffled())
             firstThemeClicked = false
             secondThemeClicked = true
             thirdThemeClicked = false
@@ -123,7 +123,7 @@ struct ContentView: View {
             Text("Sea")
                 .font(.footnote)
         }.onTapGesture {
-            themeChoosing(themeChosen: seaEmojis)
+            themeChoosing(themeChosen: seaEmojis.shuffled())
             firstThemeClicked = false
             secondThemeClicked = false
             thirdThemeClicked = true
