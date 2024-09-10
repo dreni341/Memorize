@@ -8,15 +8,29 @@
 import Foundation
 
 struct MemorizeGame<CardContent> {
-    var cards: Array<Card>
+    private(set) var cards: Array<Card>
     
-    func chooseCard(card: Card) {
-        
+    init(numberOfPairsOfCards: Int, cardContentFactory: (Int) -> CardContent) {
+        cards = []
+        // add numberOfPairsOfCards x 2 cards
+        for pairIndex in 0..<max(2, numberOfPairsOfCards) {
+            let content = cardContentFactory(pairIndex)
+            cards.append(Card(content: content))
+            cards.append(Card(content: content))
+        }
+    }
+    
+    func chooseCard(_ card: Card) {
+//        card.isFacedUp.toggle()
+    }
+    
+    mutating func shuffleCard() {
+        cards.shuffle()
     }
     
     struct Card {
-        var isFacedUp: Bool
-        var isMatched: Bool
-        var content: CardContent
+        var isFacedUp = false
+        var isMatched = false
+        let content: CardContent
     }
 }
