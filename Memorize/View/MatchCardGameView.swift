@@ -14,9 +14,11 @@ struct MatchCardGameView: View {
         VStack {
             Text("Memorize")
                 .font(.largeTitle)
+                .foregroundStyle(.teal)
                 .padding(.vertical, -3)
             ScrollView {
                 cards
+                    .animation(.default, value: viewModel.card)
             }
             Button("Shuffle") {
                 viewModel.shuffleCards()
@@ -29,12 +31,15 @@ struct MatchCardGameView: View {
     
     var cards: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 80), spacing: 0)], spacing: 0) {
-            ForEach(viewModel.card.indices, id: \.self) { index in
-                CardView(card: viewModel.card[index])
+            ForEach(viewModel.card) { card in
+                CardView(card: card)
                     .aspectRatio(2/3, contentMode: .fit)
                     .padding(3)
+                    .onTapGesture {
+                        viewModel.choose(card)
+                    }
             }
-            .foregroundColor(.black)
+            .foregroundColor(.teal)
         }
     }
 }
@@ -57,8 +62,10 @@ struct CardView: View {
                     .minimumScaleFactor(0.01)
                     .aspectRatio(1, contentMode: .fit)
             } .opacity(card.isFacedUp ? 1 : 0)
-            rectangle.fill().opacity(card.isFacedUp ? 0 : 1)
-        } 
+            rectangle.fill()
+                .opacity(card.isFacedUp ? 0 : 1)
+        }
+        .opacity(card.isFacedUp || !card.isMatched ? 1 : 0)
     }
 }
 
