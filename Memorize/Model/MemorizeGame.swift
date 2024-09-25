@@ -43,7 +43,6 @@ struct MemorizeGame<CardContent> where CardContent: Equatable {
     
     mutating func shuffleCard() {
         cards.shuffle()
-        print(cards)
     }
     
     struct Card: Equatable, Identifiable, CustomDebugStringConvertible {

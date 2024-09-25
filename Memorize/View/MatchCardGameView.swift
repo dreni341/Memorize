@@ -12,20 +12,34 @@ struct MatchCardGameView: View {
     
     var body: some View {
         VStack {
-            Text("Memorize")
-                .font(.largeTitle)
-                .foregroundStyle(.teal)
-                .padding(.vertical, -3)
+            HStack(spacing: 20) {
+                Text("Best: %")
+                    .font(.headline)
+                Text("Memorize")
+                    .font(.largeTitle)
+                    .foregroundStyle(.teal)
+                Text("Current: %")
+                    .font(.headline)
+                    .padding(.bottom, -3)
+            } .padding(.vertical, -5)
             ScrollView {
-                cards
-                    .animation(.default, value: viewModel.card)
+                cards  .animation(.default, value: viewModel.card)
             }
-            Button("Shuffle") {
-                viewModel.shuffleCards()
-            } .padding(.bottom, -18)
+            HStack(spacing: 50) {
+                Button("Switch") {
+                    viewModel.newGameCreated()
+                }
+                Text("Theme")
+                    .font(.headline)
+                Button("Shuffle") {
+                    viewModel.shuffleCards()
+                }
+            } .padding(.top, 11)
+                .padding(.bottom, -15)
         } .padding()
             .onAppear{
                 viewModel.shuffleCards()
+                EmojiMemoryGame.appendRandomArray()
             }
     }
     
