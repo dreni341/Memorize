@@ -5,10 +5,12 @@
 //  Created by Dren Uruqi on 5.9.24.
 //
 
-import Foundation
+import SwiftUI
 
 struct MemorizeGame<CardContent> where CardContent: Equatable {
     private(set) var cards: Array<Card>
+    @AppStorage("bestScore") var bestScore = 0
+    var currentScore = 0
     
     init(numberOfPairsOfCards: Int, cardContentFactory: (Int) -> CardContent) {
         cards = []
@@ -32,12 +34,18 @@ struct MemorizeGame<CardContent> where CardContent: Equatable {
                     if cards[chosenIndex].content == cards[potentialMatchIndex].content {
                         cards[chosenIndex].isMatched = true
                         cards[potentialMatchIndex].isMatched = true
+                        currentScore += 2
+                    } else {
+                        currentScore -= 1
                     }
                 } else {
                     indexOfTheOneAndOnlyFaceUpCard = chosenIndex
                 }
                 cards[chosenIndex].isFacedUp = true
             }
+        }
+        if currentScore >= bestScore {
+            bestScore = currentScore
         }
     }
     

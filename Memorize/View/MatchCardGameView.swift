@@ -13,12 +13,12 @@ struct MatchCardGameView: View {
     var body: some View {
         VStack {
             HStack(spacing: 20) {
-                Text("Best: %")
+                Text("Best: \(viewModel.bestScore)")
                     .font(.headline)
                 Text("Memorize")
                     .font(.largeTitle)
                     .foregroundStyle(.teal)
-                Text("Current: %")
+                Text("Current: \(viewModel.currentScore)")
                     .font(.headline)
                     .padding(.bottom, -3)
             } .padding(.vertical, -5)
@@ -29,7 +29,7 @@ struct MatchCardGameView: View {
                 Button("Switch") {
                     viewModel.newGameCreated()
                 }
-                Text("Theme")
+                Text(viewModel.themeSetter().0)
                     .font(.headline)
                 Button("Shuffle") {
                     viewModel.shuffleCards()
@@ -53,7 +53,7 @@ struct MatchCardGameView: View {
                         viewModel.choose(card)
                     }
             }
-            .foregroundColor(.teal)
+            .foregroundColor(viewModel.themeSetter().1)
         }
     }
 }

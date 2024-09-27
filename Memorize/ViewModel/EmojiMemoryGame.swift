@@ -8,6 +8,7 @@
 import SwiftUI
 
 class EmojiMemoryGame: ObservableObject {
+    var model = createMemoryGame()
     private static let carnivoreEmojis = ["🦊", "🦁", "🐻", "🐉", "🐅", "🐊", "🦅", "🐺", "🦖", "🦇"]
     private static let herbivoreEmojis = ["🐨", "🐒", "🪿", "🐢", "🦍", "🐄", "🦒", "🦆", "🦕", "🦘"]
     private static let seaEmojis = ["🦈", "🐋", "🦭", "🐙", "🦑", "🪼", "🦀", "🐬", "🦞", "🐟"]
@@ -15,6 +16,7 @@ class EmojiMemoryGame: ObservableObject {
     private static let symbolsEmojis = ["☯️", "☣️", "☮️", "⚛️", "✴️", "🔯", "🪯", "☢️", "☸️", "❇️"]
     private static let spaceEmojis = ["🌚", "⭐️", "🌍", "⚡️", "☀️", "❄️", "💧", "🪐", "🌙", "🌕"]
     private static var arrayForUse: [String] = []
+    private static var themeSetterVar = ""
     
     static func appendRandomArray() {
         arrayForUse.removeAll()
@@ -22,6 +24,7 @@ class EmojiMemoryGame: ObservableObject {
         
         if let randomEmojis = allEmojiArrays.randomElement() {
             arrayForUse.append(contentsOf: randomEmojis.shuffled())
+            themeSetterVar.append(randomEmojis[0])
         }
     }
     
@@ -36,10 +39,42 @@ class EmojiMemoryGame: ObservableObject {
         }
     }
     
+    func themeSetter() -> (String, Color) {
+        if EmojiMemoryGame.themeSetterVar.count > 1 {
+            EmojiMemoryGame.themeSetterVar = String(EmojiMemoryGame.themeSetterVar.dropFirst())
+        }
+        
+        switch EmojiMemoryGame.themeSetterVar {
+        case "🦊":
+            return ("Carnivore", .red)
+        case "🐨":
+            return ("Herbivore", .green)
+        case "🦈":
+            return ("Sea", .blue)
+        case "😀":
+            return ("Emojis", .yellow)
+        case "☯️":
+            return ("Symbol", .purple)
+        case "🌚":
+            return ("Space", .teal)
+        default:
+            return ("Unknown", .orange)
+        }
+    }
+
+    
     @Published private var gameModel = createMemoryGame()
 
     var card: Array<MemorizeGame<String>.Card> {
         return gameModel.cards
+    }
+    
+    var currentScore: Int {
+        gameModel.currentScore
+    }
+    
+    var bestScore: Int {
+        gameModel.bestScore
     }
     
     // MARK: - Users Intent
