@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MatchCardGameView: View {
     @ObservedObject var viewModel: EmojiMemoryGame
+    let aspectRatio: CGFloat = 2/3
     
     var body: some View {
         VStack {
@@ -22,9 +23,8 @@ struct MatchCardGameView: View {
                     .font(.headline)
                     .padding(.bottom, -3)
             } .padding(.vertical, -5)
-            ScrollView {
-                cards  .animation(.default, value: viewModel.card)
-            }
+            cards
+                .animation(.default, value: viewModel.card)
             HStack(spacing: 50) {
                 Button("Switch") {
                     viewModel.newGameCreated()
@@ -44,17 +44,14 @@ struct MatchCardGameView: View {
     }
     
     var cards: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 80), spacing: 0)], spacing: 0) {
-            ForEach(viewModel.card) { card in
-                CardView(card: card)
-                    .aspectRatio(2/3, contentMode: .fit)
-                    .padding(3)
-                    .onTapGesture {
-                        viewModel.choose(card)
-                    }
-            }
-            .foregroundColor(viewModel.themeSetter().1)
+        AspectVGrid(items: viewModel.card, aspectRatio: aspectRatio) { card in
+            CardView(card: card)
+                .padding(3)
+                .onTapGesture {
+                    viewModel.choose(card)
+                }
         }
+        .foregroundColor(viewModel.themeSetter().1)
     }
 }
     
