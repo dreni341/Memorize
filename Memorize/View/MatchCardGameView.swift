@@ -25,6 +25,7 @@ struct MatchCardGameView: View {
             } .padding(.vertical, -5)
             cards
                 .animation(.default, value: viewModel.card)
+                .foregroundColor(viewModel.themeSetter().1)
             HStack(spacing: 50) {
                 Button("Switch") {
                     viewModel.newGameCreated()
@@ -51,34 +52,9 @@ struct MatchCardGameView: View {
                     viewModel.choose(card)
                 }
         }
-        .foregroundColor(viewModel.themeSetter().1)
     }
 }
-    
-struct CardView: View {
-    let card: MemorizeGame<String>.Card
-    
-    init(card: MemorizeGame<String>.Card) {
-        self.card = card
-    }
-    
-    var body: some View {
-        ZStack {
-            let rectangle = RoundedRectangle(cornerRadius: 10)
-            Group {
-                rectangle.fill(.white)
-                rectangle.strokeBorder(lineWidth: 3)
-                Text(card.content)
-                    .font(.system(size: 100))
-                    .minimumScaleFactor(0.01)
-                    .aspectRatio(1, contentMode: .fit)
-            } .opacity(card.isFacedUp ? 1 : 0)
-            rectangle.fill()
-                .opacity(card.isFacedUp ? 0 : 1)
-        }
-        .opacity(card.isFacedUp || !card.isMatched ? 1 : 0)
-    }
-}
+
 
 
 struct MatchCardGameView_Previews: PreviewProvider {
