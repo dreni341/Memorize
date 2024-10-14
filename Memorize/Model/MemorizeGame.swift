@@ -36,12 +36,20 @@ struct MemorizeGame<CardContent> where CardContent: Equatable {
                         cards[potentialMatchIndex].isMatched = true
                         currentScore += 2
                     } else {
-                        currentScore -= 1
+                        if cards[chosenIndex].hasBeenSeen {
+                            currentScore -= 1
+                        }
+                        if cards[potentialMatchIndex].hasBeenSeen {
+                            currentScore -= 1
+                        }
                     }
                 } else {
                     indexOfTheOneAndOnlyFaceUpCard = chosenIndex
                 }
                 cards[chosenIndex].isFacedUp = true
+            } else {
+                cards[chosenIndex].isFacedUp = false
+                currentScore -= 1
             }
         }
         if currentScore >= bestScore {
@@ -54,8 +62,9 @@ struct MemorizeGame<CardContent> where CardContent: Equatable {
     }
     
     struct Card: Equatable, Identifiable, CustomDebugStringConvertible {
-        var isFacedUp = false
+        var isFacedUp = false { didSet { if oldValue && !isFacedUp { hasBeenSeen = true } } }
         var isMatched = false
+        var hasBeenSeen = false
         let content: CardContent
         var id: String
         var debugDescription: String {

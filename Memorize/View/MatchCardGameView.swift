@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MatchCardGameView: View {
     @ObservedObject var viewModel: EmojiMemoryGame
+    typealias Card = MemorizeGame<String>.Card
     let aspectRatio: CGFloat = 2/3
     
     var body: some View {
@@ -18,23 +19,35 @@ struct MatchCardGameView: View {
                     .font(.headline)
                 Text("Memorize")
                     .font(.largeTitle)
-                    .foregroundStyle(.teal)
+                    .foregroundStyle(.black)
+                    .padding(.leading, 7)
                 Text("Current: \(viewModel.currentScore)")
                     .font(.headline)
                     .padding(.bottom, -3)
             } .padding(.vertical, -5)
             cards
-                .animation(.default, value: viewModel.card)
+            //                .animation(.bouncy, value: viewModel.card)
                 .foregroundColor(viewModel.themeSetter().1)
             HStack(spacing: 50) {
                 Button("Switch") {
-                    viewModel.newGameCreated()
-                }
+                    withAnimation(.bouncy) {
+                        viewModel.newGameCreated()
+                    }
+                } .frame(width: 70, height: 30)
+                    .foregroundColor(.white)
+                    .background(viewModel.themeSetter().1)
+                    .cornerRadius(10)
                 Text(viewModel.themeSetter().0)
+                    .foregroundColor(viewModel.themeSetter().1)
                     .font(.headline)
                 Button("Shuffle") {
-                    viewModel.shuffleCards()
-                }
+                    withAnimation(.bouncy) {
+                        viewModel.shuffleCards()
+                    }
+                } .frame(width: 70, height: 30)
+                    .foregroundColor(.white)
+                    .background(viewModel.themeSetter().1)
+                    .cornerRadius(10)
             } .padding(.top, 11)
                 .padding(.bottom, -15)
         } .padding()
@@ -49,9 +62,15 @@ struct MatchCardGameView: View {
             CardView(card: card)
                 .padding(3)
                 .onTapGesture {
-                    viewModel.choose(card)
+                    withAnimation(.easeInOut(duration: 0.6)) {
+                        viewModel.choose(card)
+                    }
                 }
         }
+    }
+    
+    private func scoreChanged(causedBy card: Card) -> Int {
+        return 0
     }
 }
 
