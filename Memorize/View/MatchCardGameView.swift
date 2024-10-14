@@ -28,7 +28,8 @@ struct MatchCardGameView: View {
             cards
             //                .animation(.bouncy, value: viewModel.card)
                 .foregroundColor(viewModel.themeSetter().1)
-            HStack(spacing: 50) {
+            HStack(spacing: 20) {
+                deck
                 Button("Switch") {
                     withAnimation(.bouncy) {
                         viewModel.newGameCreated()
@@ -48,6 +49,7 @@ struct MatchCardGameView: View {
                     .foregroundColor(.white)
                     .background(viewModel.themeSetter().1)
                     .cornerRadius(10)
+                deck
             } .padding(.top, 11)
                 .padding(.bottom, -15)
         } .padding()
@@ -57,20 +59,78 @@ struct MatchCardGameView: View {
             }
     }
     
-    var cards: some View {
+    private var cards: some View {
         AspectVGrid(items: viewModel.card, aspectRatio: aspectRatio) { card in
-            CardView(card: card)
-                .padding(3)
-                .onTapGesture {
-                    withAnimation(.easeInOut(duration: 0.6)) {
-                        viewModel.choose(card)
+            if isDealt(card) {
+                CardView(card: card)
+                    .matchedGeometryEffect(id: card.id, in: dealingNameSpace)
+                    .transition(.asymmetric(insertion: .identity, removal: .identity))
+                    .padding(3)
+                    .overlay{FlyingNumber(number: scoreChanged(causedBy: card))}
+                    .zIndex(scoreChanged(causedBy: card) != 0 ? 1 : 0)
+                    .onTapGesture {
+                        choose(card)
                     }
-                }
+            }
         }
     }
     
+    private func choose(_ card: Card) {
+        withAnimation(.easeInOut(duration: 0.6)) {
+            let scoreBeforeChoosing = viewModel.currentScore
+            viewModel.choose(card)
+            let scoreAfterChoosing = viewModel.currentScore - scoreBeforeChoosing
+            lastScoreChange = (scoreAfterChoosing, causedByCardId: card.id)
+        }
+    }
+    
+    
+    @State private var dealt = Set<Card.ID>()
+    
+    private func isDealt(_ card: Card) -> Bool {
+        dealt.contains(card.id)
+    }
+    
+    private var unDealtCards: [Card] {
+        viewModel.card.filter{ !isDealt($0) }
+    }
+    
+    private let deckWidth: CGFloat = 30
+    private let dealInterval: TimeInterval = 0.10
+    private let dealAnimation: Animation = .interactiveSpring(duration: 0.7)
+    @Namespace private var dealingNameSpace
+    
+    private var deck: some View {
+        ZStack {
+            ForEach(unDealtCards) { card in
+                CardView(card: card)
+                    .matchedGeometryEffect(id: card.id, in: dealingNameSpace)
+                    .transition(.asymmetric(insertion: .identity, removal: .identity))
+            }
+        }
+        .frame(width: deckWidth, height: deckWidth / aspectRatio)
+        .foregroundStyle(viewModel.themeSetter().1)
+        .onTapGesture {
+            deal()
+        }
+    }
+    
+    private func deal() {
+        var delay: TimeInterval = 0
+        for card in viewModel.card {
+            withAnimation(dealAnimation.delay(delay)) {
+                _ = dealt.insert(card.id)
+            }
+            delay += dealInterval
+        }
+    }
+
+    
+    @State private var lastScoreChange = (0, causedByCardId: "")
+    
     private func scoreChanged(causedBy card: Card) -> Int {
-        return 0
+        let (amount, id) = lastScoreChange
+        return card.id == id ? amount : 0
     }
 }
 
