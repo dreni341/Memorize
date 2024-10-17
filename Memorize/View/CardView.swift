@@ -11,7 +11,7 @@ struct CardView: View {
     typealias Card = MemorizeGame<String>.Card
     let card: Card
     
-    init(card: MemorizeGame<String>.Card) {
+    init(_ card: Card) {
         self.card = card
     }
     
@@ -66,12 +66,12 @@ extension Animation {
 //    typealias card = MemorizeGame<String>.Card
     VStack {
         HStack {
-            CardView(card: CardView.Card(isFacedUp: true, content: "X", id: "test1"))
-            CardView(card: CardView.Card(content: "X", id: "test1"))
+            CardView(CardView.Card(isFacedUp: true, content: "X", id: "test1"))
+            CardView(CardView.Card(content: "X", id: "test1"))
         }
         HStack {
-            CardView(card: CardView.Card(isFacedUp: true, content: "This is a very long String and i hope it fits the Card", id: "test1"))
-            CardView(card: CardView.Card(isMatched: true, content: "X", id: "test1"))
+            CardView(CardView.Card(isFacedUp: true, content: "This is a very long String and i hope it fits the Card", id: "test1"))
+            CardView(CardView.Card(isMatched: true, content: "X", id: "test1"))
         }
     }
         .foregroundStyle(.green)

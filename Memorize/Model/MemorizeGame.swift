@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MemorizeGame<CardContent> where CardContent: Equatable {
     private(set) var cards: Array<Card>
+    var cardsToPile: [Card] = []
     @AppStorage("bestScore") var bestScore = 0
     var currentScore = 0
     
@@ -32,8 +33,10 @@ struct MemorizeGame<CardContent> where CardContent: Equatable {
             if !cards[chosenIndex].isFacedUp && !cards[chosenIndex].isMatched {
                 if let potentialMatchIndex = indexOfTheOneAndOnlyFaceUpCard {
                     if cards[chosenIndex].content == cards[potentialMatchIndex].content {
-                        cards[chosenIndex].isMatched = true
                         cards[potentialMatchIndex].isMatched = true
+                        cards[chosenIndex].isMatched = true
+                        cardsToPile += [cards[chosenIndex]]
+                        cardsToPile += [cards[potentialMatchIndex]]
                         currentScore += 2 + cards[chosenIndex].bonus + cards[potentialMatchIndex].bonus
                     } else {
                         if cards[chosenIndex].hasBeenSeen {

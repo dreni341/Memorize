@@ -30,6 +30,7 @@ struct MatchCardGameView: View {
                 .foregroundColor(viewModel.themeSetter().1)
             HStack(spacing: 20) {
                 deck
+                    .padding(.bottom, -6)
                 Button("Switch") {
                     withAnimation(.bouncy) {
                         viewModel.newGameCreated()
@@ -49,8 +50,9 @@ struct MatchCardGameView: View {
                     .foregroundColor(.white)
                     .background(viewModel.themeSetter().1)
                     .cornerRadius(10)
-                deck
-            } .padding(.top, 11)
+                discardPile
+                    .padding(.bottom, -6)
+            } .padding(.top, 15)
                 .padding(.bottom, -15)
         } .padding()
             .onAppear{
@@ -62,8 +64,9 @@ struct MatchCardGameView: View {
     private var cards: some View {
         AspectVGrid(items: viewModel.card, aspectRatio: aspectRatio) { card in
             if isDealt(card) {
-                CardView(card: card)
+                CardView(card)
                     .matchedGeometryEffect(id: card.id, in: dealingNameSpace)
+                    .matchedGeometryEffect(id: card.id, in: pilingNameSpace)
                     .transition(.asymmetric(insertion: .identity, removal: .identity))
                     .padding(3)
                     .overlay{FlyingNumber(number: scoreChanged(causedBy: card))}
@@ -98,12 +101,15 @@ struct MatchCardGameView: View {
     private let deckWidth: CGFloat = 30
     private let dealInterval: TimeInterval = 0.10
     private let dealAnimation: Animation = .interactiveSpring(duration: 0.7)
+    @State var piledCards: Array<Card> = []
     @Namespace private var dealingNameSpace
+    @Namespace private var pilingNameSpace
     
     private var deck: some View {
         ZStack {
             ForEach(unDealtCards) { card in
-                CardView(card: card)
+                CardView(card)
+                    .offset(x: .random(in: -3...3), y: .random(in: -3...3))
                     .matchedGeometryEffect(id: card.id, in: dealingNameSpace)
                     .transition(.asymmetric(insertion: .identity, removal: .identity))
             }
@@ -124,7 +130,29 @@ struct MatchCardGameView: View {
             delay += dealInterval
         }
     }
-
+    
+    private func updatePiledCards() {
+        withAnimation(dealAnimation) {
+            piledCards = viewModel.cardToPile
+        }
+    }
+    
+    private var discardPile: some View {
+        return ZStack {
+                ForEach(piledCards) { card in
+                    CardView(card)
+                        .offset(x: .random(in: -3...3), y: .random(in: -3...3))
+                        .matchedGeometryEffect(id: card.id, in: pilingNameSpace)
+                        .transition(.asymmetric(insertion: .identity, removal: .identity))
+                        .animation(.easeInOut, value: piledCards)
+                }
+                .frame(width: deckWidth, height: deckWidth / aspectRatio)
+                .foregroundStyle(viewModel.themeSetter().1)
+        }
+        .onChange(of: viewModel.cardToPile) { _ in
+            updatePiledCards()
+        }
+    }
     
     @State private var lastScoreChange = (0, causedByCardId: "")
     

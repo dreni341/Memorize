@@ -78,6 +78,10 @@ class EmojiMemoryGame: ObservableObject {
         gameModel.bestScore
     }
     
+    var cardToPile: Array<Card> {
+        gameModel.cardsToPile
+    }
+    
     // MARK: - Users Intent
     
     func shuffleCards() {
